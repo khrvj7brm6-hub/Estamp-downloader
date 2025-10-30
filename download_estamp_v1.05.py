@@ -9,6 +9,16 @@ import configparser
 # Base directory (dynamic, works in .exe too)
 BASE_DIR = Path(__file__).resolve().parent
 
+#install chromium
+import subprocess
+
+# Force browser install if missing
+try:
+    subprocess.run(["playwright", "install"], check=True)
+except Exception as e:
+    print(f"⚠️ Playwright install failed at runtime: {e}")
+
+
 # Load config
 config_path = BASE_DIR / "config.ini"
 config = configparser.ConfigParser()

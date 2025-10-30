@@ -4,8 +4,11 @@ from pathlib import Path
 import os
 
 st.set_page_config(page_title="Peak Automation Chatbot", page_icon="🤖")
-
 st.title("🤖 Peak Automation Chatbot")
+
+# Initialize session state
+if "process" not in st.session_state:
+    st.session_state.process = None
 
 # Date range input
 date_from = st.text_input("📅 Enter FROM date (dd/mm/yyyy)", "01/10/2025")
@@ -18,7 +21,6 @@ if folder_name:
     save_dir.mkdir(parents=True, exist_ok=True)
     st.success(f"Files will be saved to: {save_dir}")
 
-
 # Task selection
 task = st.selectbox("🧭 Select task to run", [
     "E-stamp downloader",
@@ -27,20 +29,52 @@ task = st.selectbox("🧭 Select task to run", [
     "Run ALL"
 ])
 
+# Run Task
 if st.button("🚀 Run Task"):
     try:
-        if task == "E-stamp downloader":
-            subprocess.run(["python", "download_estamp_v1.05.py", date_from, date_to])
-        elif task == "Receipt downloader":
-            subprocess.run(["python", "download_receipt_v1.05.py"])
-        elif task == "Merge files":
-            subprocess.run(["python", "merge_files_v1.02.py"])
-        elif task == "Run ALL":
-            subprocess.run(["python", "download_estamp_v1.05.py", date_from, date_to])
-            subprocess.run(["python", "download_receipt_v1.05.py"])
-            subprocess.run(["python", "merge_files_v1.02.py"]) 
-        st.success(f"✅ {task} completed.")
+        with st.status(f"Running {task}...", expanded=True) as status:
+            if task == "E-stamp downloader":
+                st.session_state.process = subprocess.Popen(
+                    ["python", "download_estamp_v1.05.py", date_from, date_to],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True
+                )
+            elif task == "Receipt downloader":
+                st.session_state.process = subprocess.Popen(
+                    ["python", "download_receipt_v1.05.py"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True
+                )
+            elif task == "Merge files":
+                st.session_state.process = subprocess.Popen(
+                    ["python", "merge_files_v1.02.py"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True
+                )
+            elif task == "Run ALL":
+                st.session_state.process = subprocess.Popen(
+                    ["python", "run_all.py", date_from, date_to],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True
+                )
+
+            for line in st.session_state.process.stdout:
+                st.write(line.strip())
+            st.session_state.process.wait()
+            status.update(label=f" {task} completed.", state="complete")
+            st.session_state.process = None
+
     except Exception as e:
-        st.error(f"❌ Error running {task}: {e}")
-        
- # Streamlit runs this script directly
+        st.error(f"Error running {task}: {e}")
+        st.session_state.process = None
+
+# Cancel Task
+if st.button("Cancel Task"):
+    if st.session_state.process:
+        st.session_state.process.terminate()
+        st.success("Task cancelled.")
+        st.session_state.process = None

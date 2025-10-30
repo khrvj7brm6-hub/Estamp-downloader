@@ -6,10 +6,10 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 import configparser
 
-# 📁 Base directory (dynamic, works in .exe too)
+# Base directory (dynamic, works in .exe too)
 BASE_DIR = Path(__file__).resolve().parent
 
-# 📖 Load config
+# Load config
 config_path = BASE_DIR / "config.ini"
 config = configparser.ConfigParser()
 config.read(config_path)
@@ -48,7 +48,7 @@ async def download_receipts():
 
         await page.goto("https://efiling.rd.go.th/rd-efiling-web/authen/OS9_V2")
 
-        # 🔐 Auto-fill login form
+        # Auto-fill login form
         await page.fill('input[formcontrolname="username"]', rd_id)
         await page.fill('input[formcontrolname="password"]', rd_password)
         await page.click('button.btn-login')
@@ -93,9 +93,9 @@ async def download_receipts():
                 }""", icon)
 
                 if not script_info or not is_date_in_range(script_info['date'], start_date, end_date):
-                    print(f"⛔ Skipping document {i+1} on page {page_num} — date not in range.")
+                    print(f" Skipping document {i+1} on page {page_num} — date not in range.")
                     if halt_on_skip:
-                        print("⚠️ Config flag 'halt_on_skip' is enabled. Stopping execution.")
+                        print(" Config flag 'halt_on_skip' is enabled. Stopping execution.")
                         await browser.close()
                         sys.exit(1)
                     else:
@@ -130,12 +130,12 @@ async def download_receipts():
                         with open(filename, "wb") as f:
                             f.write(pdf_bytes)
 
-                        print(f"✅ Saved {filename}")
+                        print(f" Saved {filename}")
                     else:
-                        print(f"⚠️ No base64 PDF stream found for document {i+1} on page {page_num}")
+                        print(f"⚠No base64 PDF stream found for document {i+1} on page {page_num}")
 
                 except Exception as e:
-                    print(f"❌ Failed to process document {i+1} on page {page_num}: {e}")
+                    print(f" Failed to process document {i+1} on page {page_num}: {e}")
 
                 await viewer_page.close()
 

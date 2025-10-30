@@ -3,8 +3,6 @@ services:
     name: peak-automation-ui
     env: python
     pythonVersion: 3.12.1
-    buildCommand: |
-      pip install -r requirements.txt
-      playwright install chromium
+    buildCommand: ./render-build.sh
     startCommand: streamlit run streamlit.py --server.address=0.0.0.0 --server.port=$PORT
     autoDeploy: true

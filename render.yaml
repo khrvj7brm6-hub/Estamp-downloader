@@ -2,9 +2,9 @@ services:
   - type: web
     name: peak-automation-ui
     env: python
+    pythonVersion: 3.12.1
     buildCommand: |
       pip install -r requirements.txt
       playwright install chromium
     startCommand: streamlit run ui.py --server.address=0.0.0.0 --server.port=$PORT
-    pythonVersion: 3.12
     autoDeploy: true

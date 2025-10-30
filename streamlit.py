@@ -3,8 +3,8 @@ import subprocess
 from pathlib import Path
 import os
 
-st.set_page_config(page_title="Peak Automation Chatbot", page_icon="🤖")
-st.title("🤖 Peak Automation Chatbot")
+st.set_page_config(page_title="Accounting Automation", page_icon="🤖")
+st.title("🤖 Accounting Automation")
 
 # Initialize session state
 if "process" not in st.session_state:

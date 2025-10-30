@@ -2,6 +2,7 @@ services:
   - type: web
     name: peak-automation-ui
     env: python
-    buildCommand: pip install -r requirements.txt && playwright install
+    pythonVersion: 3.12
+    buildCommand: cd /opt/render/project/src && pip install -r requirements.txt && playwright install
     startCommand: streamlit run streamlit.py --server.address=0.0.0.0 --server.port=$PORT
     autoDeploy: true

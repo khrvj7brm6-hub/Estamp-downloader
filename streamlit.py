@@ -1,5 +1,7 @@
 import streamlit as st
 import subprocess
+from pathlib import Path
+import os
 
 st.set_page_config(page_title="Peak Automation Chatbot", page_icon="🤖")
 
@@ -8,6 +10,14 @@ st.title("🤖 Peak Automation Chatbot")
 # Date range input
 date_from = st.text_input("📅 Enter FROM date (dd/mm/yyyy)", "01/10/2025")
 date_to = st.text_input("📅 Enter TO date (dd/mm/yyyy)", "31/10/2025")
+
+# Folder selection
+folder_name = st.text_input("Enter folder name for saving files")
+if folder_name:
+    save_dir = Path("downloads") / folder_name
+    save_dir.mkdir(parents=True, exist_ok=True)
+    st.success(f"Files will be saved to: {save_dir}")
+
 
 # Task selection
 task = st.selectbox("🧭 Select task to run", [
@@ -32,3 +42,5 @@ if st.button("🚀 Run Task"):
         st.success(f"✅ {task} completed.")
     except Exception as e:
         st.error(f"❌ Error running {task}: {e}")
+        
+ # Streamlit runs this script directly
